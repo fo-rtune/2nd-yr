@@ -481,24 +481,50 @@ function addToCart() {
     // Update cart badge count immediately
     updateCartBadge();
     
-    // Show confirmation
-    const toast = document.createElement('div');
-    toast.className = 'toast';
-    toast.textContent = `${currentItem.name} added to cart!`;
-    document.body.appendChild(toast);
+    // Create and show the popup
+    const popup = document.createElement('div');
+    popup.className = 'cart-popup';
+    popup.innerHTML = `
+        <div class="cart-popup-content">
+            <div class="cart-popup-header">
+                <i class="fas fa-check-circle"></i>
+                <h4>Item Added to Cart</h4>
+                <button class="close-popup"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="cart-popup-body">
+                <p>${currentItem.name} (${quantity}) has been added to your cart!</p>
+                <div class="cart-popup-actions">
+                    <button class="btn btn-outline continue-browsing">Continue Browsing</button>
+                    <a href="cart.html" class="btn btn-primary">View Cart</a>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(popup);
     
-    // Show toast
+    // Show popup with animation
     setTimeout(() => {
-        toast.classList.add('show');
+        popup.classList.add('show');
     }, 10);
     
-    // Hide toast after 3 seconds
-    setTimeout(() => {
-        toast.classList.remove('show');
+    // Add event listeners for popup buttons
+    const closeBtn = popup.querySelector('.close-popup');
+    const continueBtn = popup.querySelector('.continue-browsing');
+    
+    // Close popup function
+    const closePopup = () => {
+        popup.classList.remove('show');
         setTimeout(() => {
-            document.body.removeChild(toast);
+            document.body.removeChild(popup);
         }, 300);
-    }, 3000);
+    };
+    
+    // Add event listeners
+    closeBtn.addEventListener('click', closePopup);
+    continueBtn.addEventListener('click', closePopup);
+    
+    // Auto-close after 5 seconds
+    setTimeout(closePopup, 5000);
     
     // Close modal
     closeItemModal();
@@ -833,3 +859,4 @@ function animateCounter(element, start, end, duration = 1000) {
     };
     window.requestAnimationFrame(step);
 }
+
